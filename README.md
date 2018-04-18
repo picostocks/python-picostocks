@@ -1,1 +1,1 @@
-# python-picostocks
+# python-picostocks-api

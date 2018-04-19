@@ -15,9 +15,11 @@ class Exchanger(object):
     def __init__(self, private_key, user_id):
         self.private_key = private_key
         self.user_id = user_id
+
+        self.signing_key = ed25519.SigningKey(self.private_key, encoding='hex')
+
         self.session = requests.Session()
         self.session.headers.update({'User-Agent': 'picostocks/python'})
-        self.signing_key = ed25519.SigningKey(self.private_key, encoding='hex')
 
     async def _get_order_request_data(self, sign_key, stock_id, price_id, quantity, price):
         nonce_resp = await self.get_nonce()
@@ -79,7 +81,7 @@ class Exchanger(object):
             'user_id':user_id
         }
 
-        response = await self._get("market/orderbook/", params=dict())
+        response = await self._get("market/orderbook/", params=params)
         return response.json()
 
     async def put_ask(self, stock_id, price_id, quantity, price):

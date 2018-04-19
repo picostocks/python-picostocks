@@ -1,0 +1,6 @@
+include LICENSE
+include CONTRIBUTING.rst
+include README.rst
+include MAKEFILE
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]

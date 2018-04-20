@@ -10,7 +10,7 @@ import requests
 
 
 class Exchanger(object):
-    PREFIX_URL = "https://picostocks.com/api/"
+    PREFIX_URL = "https://picostocks.com/api/v1/"
 
     def __init__(self, private_key, user_id):
         self.private_key = private_key
@@ -82,6 +82,21 @@ class Exchanger(object):
         }
 
         response = await self._get("market/orderbook/", params=params)
+        return response.json()
+
+    async def get_historical_orders(self, stock_id):
+        response = await self._get(
+            'account/%s/%s/' % (self.user_id, stock_id))
+        return response.json()
+
+    async def get_transfers_internal(self, stock_id):
+        response = await self._get(
+            'account/transfers/internal/%s/%s/' % (self.user_id, stock_id))
+        return response.json()
+
+    async def get_transfers_external(self, stock_id):
+        response = await self._get(
+            'account/transfers/internal/%s/%s/' % (self.user_id, stock_id))
         return response.json()
 
     async def put_ask(self, stock_id, price_id, quantity, price):

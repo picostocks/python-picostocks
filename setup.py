@@ -34,5 +34,5 @@ setup(
     name='python-picostocks-api',
     packages=['picostocks'],
     url='https://github.com/picostocks/python-picostocks-api',
-    version='0.1.0',
+    version='0.1.1',
 )

@@ -84,6 +84,21 @@ class Exchanger(object):
         response = await self._get("market/orderbook/", params=params)
         return response.json()
 
+    async def get_historical_orders(self, stock_id):
+        response = await self._get(
+            'account/%s/%s/' % (self.user_id, stock_id))
+        return response.json()
+
+    async def get_transfers_internal(self, stock_id):
+        response = await self._get(
+            'account/transfers/internal/%s/%s/' % (self.user_id, stock_id))
+        return response.json()
+
+    async def get_transfers_external(self, stock_id):
+        response = await self._get(
+            'account/transfers/internal/%s/%s/' % (self.user_id, stock_id))
+        return response.json()
+
     async def put_ask(self, stock_id, price_id, quantity, price):
         request_data = await self._get_order_request_data("ASK", stock_id, price_id, quantity, price)
         response = await self._post("trader/ask/put/", request_data)

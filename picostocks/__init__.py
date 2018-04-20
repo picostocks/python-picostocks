@@ -5,3 +5,6 @@
 
 __author__ = """picostocks"""
 __version__ = '0.1.1'
+
+
+from .client import Exchanger

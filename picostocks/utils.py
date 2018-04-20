@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import decimal
 
-def decimal2string(value, decimal_places=18):
-    value = str(float(value))
-    prefix, postfix = value.split(".")
-    postfix += "0" * (decimal_places - len(postfix))
-    return "%s.%s" % (prefix, postfix)
+
+def float2string(number, precision=18):
+    return '{0:.{prec}f}'.format(
+        decimal.Context(prec=100).create_decimal(str(number)),
+        prec=precision,
+    )

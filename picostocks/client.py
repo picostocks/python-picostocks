@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .utils import decimal2string
+from .utils import float2string
 
 import asyncio
 import urllib.parse
@@ -28,9 +28,9 @@ class Exchanger(object):
             sign_key,
             str(self.user_id),
             str(stock_id),
-            decimal2string(quantity),
+            float2string(quantity),
             str(price_id),
-            decimal2string(price),
+            float2string(price),
             str(nonce_resp['nonce'])
         ])
 

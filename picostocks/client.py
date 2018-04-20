@@ -10,7 +10,7 @@ import requests
 
 
 class Exchanger(object):
-    PREFIX_URL = "https://picostocks.com/api/"
+    PREFIX_URL = "https://picostocks.com/api/v1/"
 
     def __init__(self, private_key, user_id):
         self.private_key = private_key

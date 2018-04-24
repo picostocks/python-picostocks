@@ -121,13 +121,11 @@ NONE
 **Response:**
 ```JSON
 {
-    "id": 1,
     "nonce": 45
 }
 ```
 Attribute | Type |  Value
 ----------|------|-------
-id | INT | user_id for which nonce was requested
 nonce | INT | an arbitrary number that can only be used once ([read more](https://en.wikipedia.org/wiki/Cryptographic_nonce))
 
 ### Balance

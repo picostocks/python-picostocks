@@ -23,7 +23,8 @@ You can use it to limit number of results retrieved from an endpoint. It will ro
 * Parameters may be sent in any order.
 
 * All `price`, `quantity` and `fee` values are representation of decimal numbers with max 56 digits and precision of 18 digits after decimal place, casted to a string.
-* All `sync` values are combination of Date and Time in UTC (ISO 8601) format.
+* Some of the endpoints servicing GET requests take optional `limit` query parameter. It is always rounded up to the nearest hundreds. Default 100, Max 300.
+Look for **Parameters** tables next to each endpoint to see if it is available.
 
 # Endpoint security type
 * PRIVATE_KEY **is case sensitive**.
@@ -93,6 +94,7 @@ nonce | "1"
 * `signature` refers to the [digital signature](https://en.wikipedia.org/wiki/Digital_signature).
 Read more how to generate a message signature for picostocks exchange in
 [SIGNED Endpoint security](#signed-endpoint-security) section.
+* `sync` refers to combination of Date and Time in UTC (ISO 8601) format.
 
 ## ENUM definitions
 **ASSET STATUS:**
@@ -128,6 +130,31 @@ Attribute | Type |  Value
 id | INT | user_id for which nonce was requested
 nonce | INT | an arbitrary number that can only be used once ([read more](https://en.wikipedia.org/wiki/Cryptographic_nonce))
 
+### Balance
+```
+GET /api/v1/account/balance/<user_id>/
+```
+Get information about user's balance.
+
+**Parameters:**
+NONE
+
+**Response:**
+```JSON
+[
+    {
+        "asset_id": 2,
+        "locked": "0.001230000000000000",
+        "free": "0.012300000000000000"
+    }
+]
+```
+Attribute | Type
+----------|------
+asset_id | STRING
+locked | STRING
+free | STRING
+
 ## Market Data endpoints
 ### Stocks info
 ```
@@ -136,7 +163,9 @@ GET /api/v1/market/stocks/
 Get detailed information about all available stocks on picostocks exchange.
 
 **Parameters:**
-NONE
+Name | Type | Mandatory
+---- | ---- | ---------
+limit | INT | NO
 
 **Response:**
 ```JSON
@@ -186,6 +215,7 @@ Name | Type | Mandatory | Description
 user_id | INT | NO | If no `user_id` is specified, response will return order book for all users
 price_id | INT | NO | If no `price_id` is specified, response will return order book for all `quote assets`
 stock_id | INT | NO | If no `stock_id` is specified, response will return order book for all `base assets`
+limit | INT | NO
 
 **Response:**
 ```JSON
@@ -307,7 +337,9 @@ GET /api/v1/account/order/history/<user_id>/<stock_id>/
 Get asks & bids history for specific `user_id` and `stock_id`
 
 **Parameters:**
-NONE
+Name | Type | Mandatory
+---- | ---- | ---------
+limit | INT | NO
 
 **Response:**
 ```JSON

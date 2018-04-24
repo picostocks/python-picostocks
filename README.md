@@ -22,8 +22,7 @@ It is important to **NOT** treat this as a failure; the execution status is
 
 * For `GET` endpoints, parameters must be sent as a `query string`.
 * For `POST`, `PUT`, and `DELETE` endpoints, the parameters must be sent in the `request body` with content type
-  `application/json` or `application/x-www-form-urlencoded`. You may mix parameters between both the
-  `query string` and `request body` if you wish to do so.
+  `application/json`.
 * Parameters may be sent in any order.
 
 * All `price`, `quantity` and `fee` values are representation of decimal numbers with max 56 digits and precision of 18 digits after decimal place, casted to a string.
@@ -162,6 +161,7 @@ GET /api/v1/market/stocks/
 Get detailed information about all available stocks on picostocks exchange.
 
 **Parameters:**
+
 Name | Type | Mandatory
 ---- | ---- | ---------
 limit | INT | NO
@@ -336,6 +336,7 @@ GET /api/v1/account/order/history/<user_id>/<stock_id>/
 Get asks & bids history for specific `user_id` and `stock_id`
 
 **Parameters:**
+
 Name | Type | Mandatory
 ---- | ---- | ---------
 limit | INT | NO

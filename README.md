@@ -2,7 +2,7 @@
 
 This is an official Python wrapper for the Picostocks exchange REST API.
 
-# General API Information
+# General API information
 * The base endpoint is: **https://picostocks.com**
 * All endpoints return either a JSON object or array.
 * HTTP `4XX` return codes are used for for malformed requests;
@@ -29,63 +29,13 @@ It is important to **NOT** treat this as a failure; the execution status is
 * Some of `GET` endpoints take optional `limit` query parameter. You can use it to limit number of results retrieved from an endpoint.
 It is always rounded up to the nearest hundreds. Default 100, Max 300. Look for **Parameters** tables next to each endpoint to see if it is available.
 
-# SIGNED Endpoint Security
+# SIGNED endpoint security
 * PRIVATE_KEY **is case sensitive**.
 * All `/trader` endpoints are signed endpoints.
 * `SIGNED` endpoints require an additional parameter, `signature`, to be sent in the `request body`.
 * Endpoints use [`Ed25519`](https://en.wikipedia.org/wiki/EdDSA#Ed25519) signatures. The `Ed25519` is the EdDSA signature scheme using SHA-512/256 and Curve25519.
 
-## SIGNED Endpoint Examples for POST /api/v1/trader/ask/put
-Here is a step-by-step example of how to send a vaild signed payload from the Python program using
-[asyncio](https://docs.python.org/3/library/asyncio.html), [requests](https://pypi.org/project/requests/)
-and [ed25519](https://pypi.org/project/ed25519/).
-
-Key | Value
------------- | ------------
-PRIVATE_KEY | NhqPtmdSJYdKjVHjA7PZj4Mge3R5YNiP1e3UZjInClVN65XAbvqqM6A7H5fATj0j
-
-
-Parameter | Value
------------- | ------------
-sign_key | "ASK"
-user_id | "3175734150517431"
-stock_id | "2"
-quantity | "1"
-price_id | "3"
-price | "0.1"
-nonce | "1"
-
-* **Code example:**
-
-    ```python
-    import asyncio
-
-    import ed25519
-    import requests
-
-    signing_key = ed25519.SigningKey(self.private_key, encoding='hex')
-    message = ":".join([sign_key, user_id, stock_id, quantity, price_id, price, nonce])
-    signature = signing_key.sign(message.encode(), encoding='hex')
-
-    requests_data = {
-        "user_id": user_id,
-        "stock_id": stock_id,
-        "quantity": quantity,
-        "price_id": price_id,
-        "price": price,
-        "signature": signature
-    }
-
-    session = requests.Session()
-    # for example:
-    # {'User-Agent': 'mypythonpicostocksapi/1.0 https://github.com/johndoe/my-python-picostocks-api'}
-    session.headers.update({'User-Agent': '<product>/<product_version> <comments>'})
-    loop = asyncio.get_event_loop()
-    url = 'https://picostocks.com/api/v1/trader/ask/put/'
-    return await loop.run_until_complete(session.post(url, data=requests_data))
-    ```
-
-# Public API Endpoints
+# Public API endpoints
 ## Terminology
 * `stock_id` refers to the asset that is the `quantity` of a symbol.
 * `price_id` refers to the asset that is the `price` of a symbol.
@@ -153,7 +103,7 @@ asset_id | STRING
 locked | STRING
 free | STRING
 
-## Market Data endpoints
+## Market data endpoints
 ### Stocks info
 ```
 GET /api/v1/market/stocks/
@@ -211,9 +161,9 @@ Get information about all recorded orders.
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-user_id | INT | NO | If no `user_id` is specified, response will return order book for all users
-price_id | INT | NO | If no `price_id` is specified, response will return order book for all `quote assets`
-stock_id | INT | NO | If no `stock_id` is specified, response will return order book for all `base assets`
+user_id | INT | NO | if no `user_id` is specified, response will return order book for all users
+price_id | INT | NO | if no `price_id` is specified, response will return order book for all `quote assets`
+stock_id | INT | NO | if no `stock_id` is specified, response will return order book for all `base assets`
 limit | INT | NO
 
 **Response:**
@@ -267,7 +217,6 @@ NONE
 ```JSON
 [
     {
-        "id": 6,
         "stock_id": 2,
         "quantity": "0.000200000000000000",
         "from_user": 123,
@@ -323,7 +272,7 @@ NONE
 Attribute | Type | Description
 ----------|------|------
 quantity | STRING
-status | ENUM | One of [ASSET STATUS](#enum-definitions) values
+status | ENUM | one of [ASSET STATUS](#enum-definitions) values
 address | STRING | wallet address. For deposits it is always empty string
 txid | STRING | transaction ID
 memo | STRING | message associated with specific order
@@ -394,7 +343,7 @@ stock_id | INT | YES
 quantity | STRING | YES
 price_id | INT | YES
 price | STRING | YES
-signature | STRING | YESf
+signature | STRING | YES | signature of `"ASK:<user_id>:<stock_id>:<quantity>:<price_id>:<price>:<nonce>"` in hex encoding.
 
 **Response:**
 ```JSON
@@ -424,7 +373,7 @@ stock_id | INT | YES
 quantity | STRING | YES
 price_id | INT | YES
 price | STRING | YES
-signature | STRING | YES
+signature | STRING | YES | signature of `"BID:<user_id>:<stock_id>:<quantity>:<price_id>:<price>:<nonce>"` in hex encoding.
 
 **Response:**
 ```JSON
@@ -454,7 +403,7 @@ stock_id | INT | YES
 quantity | STRING | YES
 price_id | INT | YES
 price | STRING | YES
-signature | STRING | YES
+signature | STRING | YES | signature of `"CANCELASK:<user_id>:<stock_id>:<quantity>:<price_id>:<price>:<nonce>"` in hex encoding.
 
 **Response:**
 ```JSON
@@ -484,7 +433,7 @@ stock_id | INT | YES
 quantity | STRING | YES
 price_id | INT | YES
 price | STRING | YES
-signature | STRING | YES
+signature | STRING | YES | signature of `"CANCELBID:<user_id>:<stock_id>:<quantity>:<price_id>:<price>:<nonce>"` in hex encoding.
 
 **Response:**
 ```JSON

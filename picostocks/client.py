@@ -37,7 +37,7 @@ class Exchanger(object):
         return {
             'user_id': self.user_id,
             'stock_id': stock_id,
-            'shares': quantity,
+            'quantity': quantity,
             'price_id': price_id,
             'price': price,
             'signature': self.signing_key.sign(sign_message.encode(), encoding='hex')

@@ -13,26 +13,27 @@ This is an official Python wrapper for the Picostocks exchange REST API.
 but did not get a response within the timeout period.
 It is important to **NOT** treat this as a failure; the execution status is
 **UNKNOWN** and could have been a success.
+* Any endpoint can retun an ERROR; the error payload is as follows:
+```JSON
+{
+  "detail": "ERROR: error message goes here"
+}
+```
 
 * For `GET` endpoints, parameters must be sent as a `query string`.
-* `GET` endpoints take optional `query string` parameter named `limit`.
-You can use it to limit number of results retrieved from an endpoint. It will round up specified value of `limit` to whole hundreds. Maximum value for `limit` is 300.
 * For `POST`, `PUT`, and `DELETE` endpoints, the parameters must be sent in the `request body` with content type
   `application/json` or `application/x-www-form-urlencoded`. You may mix parameters between both the
   `query string` and `request body` if you wish to do so.
 * Parameters may be sent in any order.
 
 * All `price`, `quantity` and `fee` values are representation of decimal numbers with max 56 digits and precision of 18 digits after decimal place, casted to a string.
-* Some of the endpoints servicing GET requests take optional `limit` query parameter. It is always rounded up to the nearest hundreds. Default 100, Max 300.
-Look for **Parameters** tables next to each endpoint to see if it is available.
+* Some of `GET` endpoints take optional `limit` query parameter. You can use it to limit number of results retrieved from an endpoint.
+It is always rounded up to the nearest hundreds. Default 100, Max 300. Look for **Parameters** tables next to each endpoint to see if it is available.
 
-# Endpoint security type
+# SIGNED Endpoint Security
 * PRIVATE_KEY **is case sensitive**.
 * All `/trader` endpoints are signed endpoints.
-
-# SIGNED Endpoint security
-* `SIGNED` endpoints require an additional parameter, `signature`, to be
-  sent in the `request body`.
+* `SIGNED` endpoints require an additional parameter, `signature`, to be sent in the `request body`.
 * Endpoints use [`Ed25519`](https://en.wikipedia.org/wiki/EdDSA#Ed25519) signatures. The `Ed25519` is the EdDSA signature scheme using SHA-512/256 and Curve25519.
 
 ## SIGNED Endpoint Examples for POST /api/v1/trader/ask/put
@@ -397,7 +398,13 @@ signature | STRING | YESf
 **Response:**
 ```JSON
 {
-    "results": {}, status: 201
+	"user_id": 19,
+	"stock_id": 3,
+	"quantity": "0.035000000000000000",
+	"price_id": 2,
+	"price": "1000000000.000000000000000000",
+	"signature": "129999b1d69f32cc0290e8e420344c4eab0d6eafed10d8f9960e20256be95fd16e5036a81edaaeab1228b1f9c5b73f5d1c67047a360540c8dca143c486203b05",
+	"response": "b'ASK 0.035000000000000000 shares at 1000000000.000000000000000000; '"
 }
 ```
 
@@ -421,9 +428,16 @@ signature | STRING | YES
 **Response:**
 ```JSON
 {
-    "results": {}, status: 201
+	"user_id": 19,
+	"stock_id": 3,
+	"quantity": "311312380.220172400000000000",
+	"price_id": 2,
+	"price": "0.000000001000000000",
+	"signature": "171674b5a04ee11f266296c6815c36040cd29317d1e6683cdfaa18c1610fd378a4db9be4d913b5975ea5903fffc13a0b4b2c91c54559fc1c4b2b6f859e6ae002",
+	"response": "b'BID 311312380.220172400000000000 shares at 0.000000001000000000; '"
 }
 ```
+
 ### Cancel ask order
 ```
 POST /api/v1/trader/ask/cancel/
@@ -444,7 +458,13 @@ signature | STRING | YES
 **Response:**
 ```JSON
 {
-    "results": {}, status: 201
+	"user_id": 1,
+	"stock_id": 3,
+	"quantity": "0.035000000000000000",
+	"price_id": 2,
+	"price": "1000000000.000000000000000000",
+	"signature": "ceaa646d184155890c71224897e7bbf72b4cbd49092c799086cfd969de1e10fa448564ba9b46f5e02828d858882514ef4e99e0cf91f5d594504848920f56f802",
+	"response": "0.035000000000000000"
 }
 ```
 
@@ -468,6 +488,12 @@ signature | STRING | YES
 **Response:**
 ```JSON
 {
-    "results": {}, status: 201
+	"user_id": 1,
+	"stock_id": 3,
+	"quantity": "311312380.220172400000000000",
+	"price_id": 2,
+	"price": "0.000000001000000000",
+	"signature": "83c20663ac2b6bd77312ed7707d122f9b5da11404665b36cb47a845718f9b1eccd22ab40c7f6724485d37e871e7d26269b636a6beed051b5c6a904b473b7bc00",
+	"response": "311312380.220172400000000000"
 }
 ```

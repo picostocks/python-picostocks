@@ -23,11 +23,10 @@ You can use it to limit number of results retrieved from an endpoint. It will ro
 * Parameters may be sent in any order.
 
 * All `price`, `quantity` and `fee` values are representation of decimal numbers with max 56 digits and precision of 18 digits after decimal place, casted to a string.
-
-
+* All `sync` values are combination of Date and Time in UTC (ISO 8601) format.
 
 # Endpoint security type
-* API-keys and secret-keys **are case sensitive**.
+* PRIVATE_KEY **is case sensitive**.
 * All `/trader` endpoints are signed endpoints.
 
 # SIGNED Endpoint security
@@ -37,7 +36,8 @@ You can use it to limit number of results retrieved from an endpoint. It will ro
 
 ## SIGNED Endpoint Examples for POST /api/v1/trader/ask/put
 Here is a step-by-step example of how to send a vaild signed payload from the Python program using
-[requests](https://pypi.org/project/requests/) and [ed25519](https://pypi.org/project/ed25519/)
+[asyncio](https://docs.python.org/3/library/asyncio.html), [requests](https://pypi.org/project/requests/)
+and [ed25519](https://pypi.org/project/ed25519/).
 
 Key | Value
 ------------ | ------------
@@ -81,13 +81,18 @@ nonce | "1"
     session.headers.update({'User-Agent': '<product>/<product_version> <comments>'})
     loop = asyncio.get_event_loop()
     url = 'https://picostocks.com/api/v1/trader/ask/put/'
-    return await loop.run_in_executor(None, lambda: session.post(url, data=requests_data))
+    return await loop.run_until_complete(session.post(url, data=requests_data))
     ```
 
 # Public API Endpoints
 ## Terminology
-* `base asset` refers to the asset that is the `quantity` of a symbol.
-* `quote asset` refers to the asset that is the `price` of a symbol.
+* `stock_id` refers to the asset that is the `quantity` of a symbol.
+* `price_id` refers to the asset that is the `price` of a symbol.
+* `quantity` refers to shares amount for specific order.
+* `price` refers to price per share.
+* `signature` refers to the [digital signature](https://en.wikipedia.org/wiki/Digital_signature).
+Read more how to generate a message signature for picostocks exchange in
+[SIGNED Endpoint security](#signed-endpoint-security) section.
 
 ## ENUM definitions
 **ASSET STATUS:**
@@ -128,7 +133,7 @@ nonce | INT | an arbitrary number that can only be used once ([read more](https:
 ```
 GET /api/v1/market/stocks/
 ```
-Get information about all recorded stocks.
+Get detailed information about all available stocks on picostocks exchange.
 
 **Parameters:**
 NONE
@@ -165,8 +170,7 @@ NONE
     	"time_ipo": "2013-01-05T00:22:21Z",
     	"time_wait": "2013-01-05T00:24:22Z",
     	"sync": "2018-03-01T00:03:02Z"
-    },
-    ...
+    }
 ]
 ```
 ### Order book
@@ -213,19 +217,19 @@ stock_id | INT | NO | If no `stock_id` is specified, response will return order 
     ]
 }
 ```
-Attribute | Type | Value
-----------|------|------
-quantity | STRING | shares amount for specific order
-price | STRING | price per share
-price_id | INT | ID of quote asset
-stock_id | INT | ID of base asset
-sync | TIMESTAMP | Combined Date and Time in UTC (ISO 8601)
+Attribute | Type
+----------|------
+quantity | STRING
+price | STRING
+price_id | INT
+stock_id | INT
+sync | TIMESTAMP
 
 ### Internal transactions
 ```
 POST /api/v1/account/transfers/internal/<user_id>/<stock_id>/
 ```
-Get information about internal transfers (inside picostocks exchange).
+Get information about internal transfers (executed entirely inside picostocks exchange).
 
 **Parameters:**
 NONE
@@ -241,24 +245,23 @@ NONE
         "to_user": 321,
         "memo": "adadsasd",
         "sync": "2018-04-23T08:11:03.585205Z"
-    },
-    ...
+    }
 ]
 ```
-Attribute | Type | Value
+Attribute | Type | Description
 ----------|------|------
 id | INT | transfer ID number
-stock_id | INT | ID of base asset
-quantity | STRING | shares amount for specific order
+stock_id | INT
+quantity | STRING
 from_user | INT | ID of user who initiated the order
 to_user | INT | ID of user who is the recipient of the order
-sync | TIMESTAMP | Combined Date and Time in UTC (ISO 8601)
+sync | TIMESTAMP
 
 ### External transactions
 ```
 POST /api/v1/account/transfers/external/<user_id>/<stock_id>/
 ```
-Get information about external transfers (involving 3rd party users).
+Get information about external transfers (involving 3rd party users in the process).
 
 **Parameters:**
 NONE
@@ -274,8 +277,7 @@ NONE
             "txid": "md3189u4edm0q9139j",
             "memo": "memo message goes here",
             "fee": "0.001000000000000000"
-        },
-        ...
+        }
     ],
     "deposits": [
         {
@@ -289,14 +291,14 @@ NONE
     ]
 }
 ```
-Attribute | Type | Value
+Attribute | Type | Description
 ----------|------|------
-quantity | STRING | shares amount for specific order
-status | ENUM | One of ASSET STATUS values
-address | STRING | wallet address. For deposits it is always empty string.
+quantity | STRING
+status | ENUM | One of [ASSET STATUS](#enum-definitions) values
+address | STRING | wallet address. For deposits it is always empty string
 txid | STRING | transaction ID
 memo | STRING | message associated with specific order
-fee | STRING | fee associated with specific order
+fee | STRING | fee associated with specific order. For deposits it is always "0"
 
 ### Recent trades list
 ```
@@ -334,15 +336,15 @@ NONE
     ]
 }
 ```
-Attribute | Type | Value
-----------|------|------
-stock_id | INT | ID of base asset
-quantity | STRING | shares amount for specific order
-price_id | INT | ID of quote asset
-price | STRING | price per share
-bid_user | INT | ID of bidding user
-ask_user | INT | ID of asking user
-sync | TIMESTAMP | Combined Date and Time in UTC (ISO 8601)
+Attribute | Type
+----------|------
+stock_id | INT
+quantity | STRING
+price_id | INT
+price | STRING
+bid_user | INT
+ask_user | INT
+sync | TIMESTAMP
 
 ## Trading endpoints
 ### New ask order
@@ -356,11 +358,11 @@ Create a new ask order.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 user_id | INT | YES | ID of user who is making ask
-stock_id | INT | YES | ID of base asset
-quantity | STRING | YES | shares amount for specific order
-price_id | INT | YES | ID of quote asset
-price | STRING | YES | price per share
-signature | STRING | YES | Read more about signature in [SIGNED Endpoint security](#signed-endpoint-security)
+stock_id | INT | YES
+quantity | STRING | YES
+price_id | INT | YES
+price | STRING | YES
+signature | STRING | YESf
 
 **Response:**
 ```JSON
@@ -380,11 +382,11 @@ Create a new bid order.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 user_id | INT | YES | ID of user who is making bid
-stock_id | INT | YES | ID of base asset
-quantity | STRING | YES | shares amount for specific order
-price_id | INT | YES | ID of quote asset
-price | STRING | YES | price per share
-signature | STRING | YES | Read more about signature in [SIGNED Endpoint security](#signed-endpoint-security)
+stock_id | INT | YES
+quantity | STRING | YES
+price_id | INT | YES
+price | STRING | YES
+signature | STRING | YES
 
 **Response:**
 ```JSON
@@ -403,11 +405,11 @@ Cancel ask order.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 user_id | INT | YES | ID of user who is cancelling the order
-stock_id | INT | YES | ID of base asset
-quantity | STRING | YES | shares amount for specific order
-price_id | INT | YES | ID of quote asset
-price | STRING | YES | price per share
-signature | STRING | YES | Read more about signature in [SIGNED Endpoint security](#signed-endpoint-security)
+stock_id | INT | YES
+quantity | STRING | YES
+price_id | INT | YES
+price | STRING | YES
+signature | STRING | YES
 
 **Response:**
 ```JSON
@@ -427,11 +429,11 @@ Cancel bid order.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 user_id | INT | YES | ID of user who is canceling the bid
-stock_id | INT | YES | ID of base asset
-quantity | STRING | YES | shares amount for specific order
-price_id | INT | YES | ID of quote asset
-price | STRING | YES | price per share
-signature | STRING | YES | Read more about signature in [SIGNED Endpoint security](#signed-endpoint-security)
+stock_id | INT | YES
+quantity | STRING | YES
+price_id | INT | YES
+price | STRING | YES
+signature | STRING | YES
 
 **Response:**
 ```JSON

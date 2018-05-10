@@ -21,7 +21,7 @@ class Exchanger(object):
         self.session = requests.Session()
         self.session.headers.update({'User-Agent': 'picostocks/python'})
 
-    async def _get_order_request_data(self, sign_key, stock_id, price_id, quantity, price):
+    async def _get_order_request_data(self, sign_key, stock_id, unit_id, quantity, price):
         nonce_resp = await self.get_nonce()
 
         sign_message = ":".join([
@@ -29,7 +29,7 @@ class Exchanger(object):
             str(self.user_id),
             str(stock_id),
             float2string(quantity),
-            str(price_id),
+            str(unit_id),
             float2string(price),
             str(nonce_resp['nonce'])
         ])
@@ -38,7 +38,7 @@ class Exchanger(object):
             'user_id': self.user_id,
             'stock_id': stock_id,
             'quantity': quantity,
-            'price_id': price_id,
+            'unit_id': unit_id,
             'price': price,
             'signature': self.signing_key.sign(sign_message.encode(), encoding='hex')
         }
@@ -59,8 +59,8 @@ class Exchanger(object):
         response = await self._get("account/nonce/%s/" % self.user_id)
         return response.json()
 
-    async def get_order_book(self, stock_id, price_id, limit=100):
-        params = {'stock_id': stock_id, 'price_id': price_id}
+    async def get_order_book(self, stock_id, unit_id, limit=100):
+        params = {'stock_id': stock_id, 'unit_id': unit_id}
         response = await self._get("market/orderbook/", params=params)
         return response.json()
 
@@ -71,13 +71,13 @@ class Exchanger(object):
         response = await self._get("account/balance/%s/" % user_id)
         return response.json()
 
-    async def get_open_orders(self, stock_id, price_id, user_id=None, limit=100):
+    async def get_open_orders(self, stock_id, unit_id, user_id=None, limit=100):
         if user_id is None:
             user_id = self.user_id
 
         params = {
             'stock_id': stock_id,
-            'price_id': price_id,
+            'unit_id': unit_id,
             'user_id':user_id
         }
 
@@ -99,23 +99,23 @@ class Exchanger(object):
             'account/transfers/internal/%s/%s/' % (self.user_id, stock_id))
         return response.json()
 
-    async def put_ask(self, stock_id, price_id, quantity, price):
-        request_data = await self._get_order_request_data("ASK", stock_id, price_id, quantity, price)
+    async def put_ask(self, stock_id, unit_id, quantity, price):
+        request_data = await self._get_order_request_data("ASK", stock_id, unit_id, quantity, price)
         response = await self._post("trader/ask/put/", request_data)
         return response.json()
 
-    async def cancel_ask(self, stock_id, price_id, quantity, price):
-        request_data = await self._get_order_request_data("CANCELASK", stock_id, price_id, quantity, price)
+    async def cancel_ask(self, stock_id, unit_id, quantity, price):
+        request_data = await self._get_order_request_data("CANCELASK", stock_id, unit_id, quantity, price)
         response = await self._post("trader/ask/cancel/", request_data)
         return response.json()
 
-    async def put_bid(self, stock_id, price_id, quantity, price):
-        request_data = await self._get_order_request_data("BID", stock_id, price_id, quantity, price)
+    async def put_bid(self, stock_id, unit_id, quantity, price):
+        request_data = await self._get_order_request_data("BID", stock_id, unit_id, quantity, price)
         response = await self._post("trader/bid/put/", request_data)
         return response.json()
 
-    async def cancel_bid(self, stock_id, price_id, quantity, price):
-        request_data = await self._get_order_request_data("CANCELBID", stock_id, price_id, quantity, price)
+    async def cancel_bid(self, stock_id, unit_id, quantity, price):
+        request_data = await self._get_order_request_data("CANCELBID", stock_id, unit_id, quantity, price)
         response = await self._post("trader/bid/cancel/", request_data)
         return response.json()
 

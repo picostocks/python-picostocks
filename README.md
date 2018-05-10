@@ -38,7 +38,7 @@ It is always rounded up to the nearest hundreds. Default 100, Max 300. Look for 
 # Public API endpoints
 ## Terminology
 * `stock_id` refers to the asset that is the `quantity` of a symbol.
-* `price_id` refers to the asset that is the `price` of a symbol.
+* `unit_id` refers to the asset that is the `price` of a symbol.
 * `quantity` refers to shares amount for specific order.
 * `price` refers to price per share.
 * `signature` refers to the [digital signature](https://en.wikipedia.org/wiki/Digital_signature).
@@ -162,7 +162,7 @@ Get information about all recorded orders.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 user_id | INT | NO | if no `user_id` is specified, response will return order book for all users
-price_id | INT | NO | if no `price_id` is specified, response will return order book for all `quote assets`
+unit_id | INT | NO | if no `unit_id` is specified, response will return order book for all `quote assets`
 stock_id | INT | NO | if no `stock_id` is specified, response will return order book for all `base assets`
 limit | INT | NO
 
@@ -173,7 +173,7 @@ limit | INT | NO
         {
             "quantity": "0.000000000000069356",
             "price": "0.010000000000000000",
-            "price_id": 3,
+            "unit_id": 3,
             "stock_id": 2,
             "sync": "2018-04-23T12:54:37.020322Z"
         }
@@ -182,14 +182,14 @@ limit | INT | NO
         {
             "quantity": "1.200000000000000000",
             "price": "0.010000000004740000",
-            "price_id": 1,
+            "unit_id": 1,
             "stock_id": 2,
             "sync": "2018-04-23T12:54:16.999887Z"
         },
         {
             "quantity": "0.000000000079130000",
             "price": "0.010002000000004100",
-            "price_id": 4,
+            "unit_id": 4,
             "stock_id": 52,
             "sync": "2018-04-23T12:53:30.220241Z"
         }
@@ -200,7 +200,7 @@ Attribute | Type
 ----------|------
 quantity | STRING
 price | STRING
-price_id | INT
+unit_id | INT
 stock_id | INT
 sync | TIMESTAMP
 
@@ -297,7 +297,7 @@ limit | INT | NO
         {
             "stock_id": 2,
             "quantity": "1.000000000000000000",
-            "price_id": 3,
+            "unit_id": 3,
             "price": "0.100000000000000000",
             "bid_user": 1384975617398,
             "ask_user": 8504937597712,
@@ -308,7 +308,7 @@ limit | INT | NO
         {
             "stock_id": 2,
             "quantity": "1.000000000000000000",
-            "price_id": 3,
+            "unit_id": 3,
             "price": "0.100000000000000000",
             "bid_user": 8504937597712,
             "ask_user": 1384975617398,
@@ -321,7 +321,7 @@ Attribute | Type
 ----------|------
 stock_id | INT
 quantity | STRING
-price_id | INT
+unit_id | INT
 price | STRING
 bid_user | INT
 ask_user | INT
@@ -341,9 +341,9 @@ Name | Type | Mandatory | Description
 user_id | INT | YES | ID of user who is making ask
 stock_id | INT | YES
 quantity | STRING | YES
-price_id | INT | YES
+unit_id | INT | YES
 price | STRING | YES
-signature | STRING | YES | signature of `"ASK:<user_id>:<stock_id>:<quantity>:<price_id>:<price>:<nonce>"` in hex encoding.
+signature | STRING | YES | signature of `"ASK:<user_id>:<stock_id>:<quantity>:<unit_id>:<price>:<nonce>"` in hex encoding.
 
 **Response:**
 ```JSON
@@ -351,7 +351,7 @@ signature | STRING | YES | signature of `"ASK:<user_id>:<stock_id>:<quantity>:<p
 	"user_id": 19,
 	"stock_id": 3,
 	"quantity": "0.035000000000000000",
-	"price_id": 2,
+	"unit_id": 2,
 	"price": "1000000000.000000000000000000",
 	"signature": "129999b1d69f32cc0290e8e420344c4eab0d6eafed10d8f9960e20256be95fd16e5036a81edaaeab1228b1f9c5b73f5d1c67047a360540c8dca143c486203b05",
 	"response": "b'ASK 0.035000000000000000 shares at 1000000000.000000000000000000; '"
@@ -371,9 +371,9 @@ Name | Type | Mandatory | Description
 user_id | INT | YES | ID of user who is making bid
 stock_id | INT | YES
 quantity | STRING | YES
-price_id | INT | YES
+unit_id | INT | YES
 price | STRING | YES
-signature | STRING | YES | signature of `"BID:<user_id>:<stock_id>:<quantity>:<price_id>:<price>:<nonce>"` in hex encoding.
+signature | STRING | YES | signature of `"BID:<user_id>:<stock_id>:<quantity>:<unit_id>:<price>:<nonce>"` in hex encoding.
 
 **Response:**
 ```JSON
@@ -381,7 +381,7 @@ signature | STRING | YES | signature of `"BID:<user_id>:<stock_id>:<quantity>:<p
 	"user_id": 19,
 	"stock_id": 3,
 	"quantity": "311312380.220172400000000000",
-	"price_id": 2,
+	"unit_id": 2,
 	"price": "0.000000001000000000",
 	"signature": "171674b5a04ee11f266296c6815c36040cd29317d1e6683cdfaa18c1610fd378a4db9be4d913b5975ea5903fffc13a0b4b2c91c54559fc1c4b2b6f859e6ae002",
 	"response": "b'BID 311312380.220172400000000000 shares at 0.000000001000000000; '"
@@ -401,9 +401,9 @@ Name | Type | Mandatory | Description
 user_id | INT | YES | ID of user who is cancelling the order
 stock_id | INT | YES
 quantity | STRING | YES
-price_id | INT | YES
+unit_id | INT | YES
 price | STRING | YES
-signature | STRING | YES | signature of `"CANCELASK:<user_id>:<stock_id>:<quantity>:<price_id>:<price>:<nonce>"` in hex encoding.
+signature | STRING | YES | signature of `"CANCELASK:<user_id>:<stock_id>:<quantity>:<unit_id>:<price>:<nonce>"` in hex encoding.
 
 **Response:**
 ```JSON
@@ -411,7 +411,7 @@ signature | STRING | YES | signature of `"CANCELASK:<user_id>:<stock_id>:<quanti
 	"user_id": 1,
 	"stock_id": 3,
 	"quantity": "0.035000000000000000",
-	"price_id": 2,
+	"unit_id": 2,
 	"price": "1000000000.000000000000000000",
 	"signature": "ceaa646d184155890c71224897e7bbf72b4cbd49092c799086cfd969de1e10fa448564ba9b46f5e02828d858882514ef4e99e0cf91f5d594504848920f56f802",
 	"response": "0.035000000000000000"
@@ -431,9 +431,9 @@ Name | Type | Mandatory | Description
 user_id | INT | YES | ID of user who is canceling the bid
 stock_id | INT | YES
 quantity | STRING | YES
-price_id | INT | YES
+unit_id | INT | YES
 price | STRING | YES
-signature | STRING | YES | signature of `"CANCELBID:<user_id>:<stock_id>:<quantity>:<price_id>:<price>:<nonce>"` in hex encoding.
+signature | STRING | YES | signature of `"CANCELBID:<user_id>:<stock_id>:<quantity>:<unit_id>:<price>:<nonce>"` in hex encoding.
 
 **Response:**
 ```JSON
@@ -441,7 +441,7 @@ signature | STRING | YES | signature of `"CANCELBID:<user_id>:<stock_id>:<quanti
 	"user_id": 1,
 	"stock_id": 3,
 	"quantity": "311312380.220172400000000000",
-	"price_id": 2,
+	"unit_id": 2,
 	"price": "0.000000001000000000",
 	"signature": "83c20663ac2b6bd77312ed7707d122f9b5da11404665b36cb47a845718f9b1eccd22ab40c7f6724485d37e871e7d26269b636a6beed051b5c6a904b473b7bc00",
 	"response": "311312380.220172400000000000"

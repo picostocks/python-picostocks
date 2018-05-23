@@ -13,8 +13,12 @@ class Exchanger(object):
     PREFIX_URL = "https://picostocks.com/api/v1/"
 
     def __init__(self, private_key, user_id):
-        self.private_key = private_key
         self.user_id = user_id
+
+        # Bytes of private key.
+        self.private_key = private_key
+        if isinstance(self.private_key, str):
+            self.private_key = self.private_key.encode()
 
         self.signing_key = ed25519.SigningKey(self.private_key, encoding='hex')
 

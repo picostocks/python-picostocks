@@ -25,7 +25,8 @@ class Exchanger(object):
         self.session = requests.Session()
         self.session.headers.update({'User-Agent': 'picostocks/python'})
 
-    async def _get_order_request_data(self, sign_key, stock_id, unit_id, quantity, price):
+    async def _get_order_request_data(self, sign_key, stock_id, unit_id, quantity,
+                                      price):
         nonce_resp = await self.get_nonce()
 
         sign_message = ":".join([
@@ -82,7 +83,7 @@ class Exchanger(object):
         params = {
             'stock_id': stock_id,
             'unit_id': unit_id,
-            'user_id':user_id
+            'user_id': user_id
         }
 
         response = await self._get("market/orderbook/", params=params)
@@ -104,22 +105,26 @@ class Exchanger(object):
         return response.json()
 
     async def put_ask(self, stock_id, unit_id, quantity, price):
-        request_data = await self._get_order_request_data("ASK", stock_id, unit_id, quantity, price)
+        request_data = await self._get_order_request_data("ASK", stock_id, unit_id,
+                                                          quantity, price)
         response = await self._post("trader/ask/put/", request_data)
         return response.json()
 
     async def cancel_ask(self, stock_id, unit_id, quantity, price):
-        request_data = await self._get_order_request_data("CANCELASK", stock_id, unit_id, quantity, price)
+        request_data = await self._get_order_request_data("CANCELASK", stock_id, unit_id,
+                                                          quantity, price)
         response = await self._post("trader/ask/cancel/", request_data)
         return response.json()
 
     async def put_bid(self, stock_id, unit_id, quantity, price):
-        request_data = await self._get_order_request_data("BID", stock_id, unit_id, quantity, price)
+        request_data = await self._get_order_request_data("BID", stock_id, unit_id,
+                                                          quantity, price)
         response = await self._post("trader/bid/put/", request_data)
         return response.json()
 
     async def cancel_bid(self, stock_id, unit_id, quantity, price):
-        request_data = await self._get_order_request_data("CANCELBID", stock_id, unit_id, quantity, price)
+        request_data = await self._get_order_request_data("CANCELBID", stock_id, unit_id,
+                                                          quantity, price)
         response = await self._post("trader/bid/cancel/", request_data)
         return response.json()
 

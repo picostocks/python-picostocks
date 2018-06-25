@@ -91,7 +91,7 @@ NONE
 ```JSON
 [
     {
-        "asset_id": 2,
+        "stock_id": 2,
         "locked": "0.001230000000000000",
         "free": "0.012300000000000000"
     }
@@ -99,7 +99,7 @@ NONE
 ```
 Attribute | Type
 ----------|------
-asset_id | STRING
+stock_id | STRING
 locked | STRING
 free | STRING
 

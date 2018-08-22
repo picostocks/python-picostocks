@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from .utils import float2string
+from picostocks.utils import float2string
 
 import asyncio
 import urllib.parse
@@ -89,9 +89,11 @@ class Exchanger(object):
         response = await self._get("market/orderbook/", params=params)
         return response.json()
 
-    async def get_historical_orders(self, stock_id):
+    async def get_historical_orders(self, stock_id, user_id=None):
+        if user_id is None:
+            user_id = self.user_id
         response = await self._get(
-            'account/%s/%s/' % (self.user_id, stock_id))
+            'account/order/history/%s/%s/' % (user_id, stock_id))
         return response.json()
 
     async def get_transfers_internal(self, stock_id):

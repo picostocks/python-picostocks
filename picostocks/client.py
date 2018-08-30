@@ -53,13 +53,13 @@ class Exchanger(object):
         loop = asyncio.get_event_loop()
         url = urllib.parse.urljoin(self.PREFIX_URL, rel_url)
         return await loop.run_in_executor(
-            None, lambda: self.session.get(url, params=params))
+            None, lambda: self.session.get(url, params))
 
     async def _post(self, rel_url, data=None, params=None):
         loop = asyncio.get_event_loop()
         url = urllib.parse.urljoin(self.PREFIX_URL, rel_url)
         return await loop.run_in_executor(
-            None, lambda: self.session.post(url, data=data, params=params))
+            None, lambda: self.session.post(url, data, params))
 
     async def get_nonce(self):
         response = await self._get("account/nonce/%s/" % self.user_id)
@@ -131,8 +131,8 @@ class Exchanger(object):
         response = await self._post("trader/bid/cancel/", request_data)
         return response.json()
 
-    async def get_stocks(self):
-        response = await self._get("market/stocks/")
+    async def get_stocks(self, limit=100):
+        response = await self._get("market/stocks/", params={'limt': limit})
         return response.json()
 
 

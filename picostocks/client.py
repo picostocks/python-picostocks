@@ -104,7 +104,7 @@ class Exchanger(object):
 
     async def get_transfers_external(self, stock_id):
         response = await self._get(
-            'account/transfers/internal/%s/%s/' % (self.user_id, stock_id))
+            'account/transfers/external/%s/%s/' % (self.user_id, stock_id))
         return response.json()
 
     async def put_ask(self, stock_id, unit_id, quantity, price):

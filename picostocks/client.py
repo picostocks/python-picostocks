@@ -10,7 +10,7 @@ from picostocks.utils import float2string
 
 
 class Exchanger(object):
-    PREFIX_URL = "https://picostocks.com/api/v1/"
+    PREFIX_URL = "https://api.picostocks.com/v1/"
 
     def __init__(self, private_key, user_id, session_cls=None):
         self.user_id = user_id

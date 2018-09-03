@@ -12,7 +12,7 @@ from picostocks.utils import float2string
 class Exchanger(object):
     PREFIX_URL = "https://api.picostocks.com/v1/"
 
-    def __init__(self, private_key, user_id, session_cls=None):
+    def __init__(self, private_key, user_id, session=None):
         self.user_id = user_id
 
         # Bytes of private key.
@@ -21,7 +21,7 @@ class Exchanger(object):
             self.private_key = self.private_key.encode()
 
         self.signing_key = ed25519.SigningKey(self.private_key, encoding='hex')
-        self.session = session_cls
+        self.session = session
         if self.session is None:
             self.session = requests.Session()
             self.session.headers.update({'User-Agent': 'picostocks/python'})

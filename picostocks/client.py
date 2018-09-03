@@ -132,7 +132,7 @@ class Exchanger(object):
         return response.json()
 
     async def get_stocks(self, limit=100):
-        response = await self._get("market/stocks/", params={'limt': limit})
+        response = await self._get("market/stocks/", params={'limit': limit})
         return response.json()
 
 

@@ -46,7 +46,7 @@ class Exchanger(object):
             'quantity': float2string(quantity),
             'unit_id': unit_id,
             'price': float2string(price),
-            'signature': self.signing_key.sign(sign_message.encode(), encoding='hex')
+            'signature': self.signing_key.sign(sign_message.encode()).hex()
         }
 
     async def _get(self, rel_url, params=None):

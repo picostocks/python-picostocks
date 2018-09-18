@@ -61,7 +61,7 @@ Read more how to generate a message signature for picostocks exchange in
 ## General endpoints
 ### Security
 ```
-GET /api/v1/account/nonce/<user_id>/
+GET /v1/account/nonce/<user_id>/
 ```
 Get nonce for the `user_id`.
 
@@ -80,7 +80,7 @@ nonce | INT | an arbitrary number that can only be used once ([read more](https:
 
 ### Balance
 ```
-GET /api/v1/account/balance/<user_id>/
+GET /v1/account/balance/<user_id>/
 ```
 Get information about user's balance.
 
@@ -106,7 +106,7 @@ free | STRING
 ## Market data endpoints
 ### Stocks info
 ```
-GET /api/v1/market/stocks/
+GET /v1/market/stocks/
 ```
 Get detailed information about all available stocks on picostocks exchange.
 
@@ -153,7 +153,7 @@ limit | INT | NO
 ```
 ### Order book
 ```
-GET /api/v1/market/orderbook/
+GET /v1/market/orderbook/
 ```
 Get information about all recorded orders.
 
@@ -206,7 +206,7 @@ sync | TIMESTAMP
 
 ### Internal transactions
 ```
-POST /api/v1/account/transfers/internal/<user_id>/<stock_id>/
+POST /v1/account/transfers/internal/<user_id>/<stock_id>/
 ```
 Get information about internal transfers (executed entirely inside picostocks exchange).
 
@@ -237,7 +237,7 @@ sync | TIMESTAMP
 
 ### External transactions
 ```
-POST /api/v1/account/transfers/external/<user_id>/<stock_id>/
+POST /v1/account/transfers/external/<user_id>/<stock_id>/
 ```
 Get information about external transfers (involving 3rd party users in the process).
 
@@ -280,7 +280,7 @@ fee | STRING | fee associated with specific order. For deposits it is always "0"
 
 ### Recent trades list
 ```
-GET /api/v1/account/order/history/<user_id>/<stock_id>/
+GET /v1/account/order/history/<user_id>/<stock_id>/
 ```
 Get asks & bids history for specific `user_id` and `stock_id`
 
@@ -330,7 +330,7 @@ sync | TIMESTAMP
 ## Trading endpoints
 ### New ask order
 ```
-POST /api/v1/trader/ask/put/
+POST /v1/trader/ask/put/
 ```
 Create a new ask order.
 
@@ -360,7 +360,7 @@ signature | STRING | YES | signature of `"ASK:<user_id>:<stock_id>:<quantity>:<u
 
 ### New bid order
 ```
-POST /api/v1/trader/bid/put/
+POST /v1/trader/bid/put/
 ```
 Create a new bid order.
 
@@ -390,7 +390,7 @@ signature | STRING | YES | signature of `"BID:<user_id>:<stock_id>:<quantity>:<u
 
 ### Cancel ask order
 ```
-POST /api/v1/trader/ask/cancel/
+POST /v1/trader/ask/cancel/
 ```
 Cancel ask order.
 
@@ -420,7 +420,7 @@ signature | STRING | YES | signature of `"CANCELASK:<user_id>:<stock_id>:<quanti
 
 ### Cancel bid order
 ```
-POST /api/v1/trader/bid/cancel/
+POST /v1/trader/bid/cancel/
 ```
 Cancel bid order.
 

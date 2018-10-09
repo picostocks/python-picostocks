@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from picostocks.utils import float2string
-
 import asyncio
 import urllib.parse
 
 import ed25519
 import requests
 
+from picostocks.utils import float2string
+
 
 class Exchanger(object):
     PREFIX_URL = "https://api.picostocks.com/v1/"
 
-    def __init__(self, private_key, user_id):
+    def __init__(self, private_key, user_id, session=None):
         self.user_id = user_id
 
         # Bytes of private key.
@@ -21,9 +21,10 @@ class Exchanger(object):
             self.private_key = self.private_key.encode()
 
         self.signing_key = ed25519.SigningKey(self.private_key, encoding='hex')
-
-        self.session = requests.Session()
-        self.session.headers.update({'User-Agent': 'picostocks/python'})
+        self.session = session
+        if self.session is None:
+            self.session = requests.Session()
+            self.session.headers.update({'User-Agent': 'picostocks/python'})
 
     async def _get_order_request_data(self, sign_key, stock_id, unit_id, quantity,
                                       price):
@@ -45,20 +46,20 @@ class Exchanger(object):
             'quantity': float2string(quantity),
             'unit_id': unit_id,
             'price': float2string(price),
-            'signature': self.signing_key.sign(sign_message.encode(), encoding='hex')
+            'signature': self.signing_key.sign(sign_message.encode()).hex()
         }
 
     async def _get(self, rel_url, params=None):
         loop = asyncio.get_event_loop()
         url = urllib.parse.urljoin(self.PREFIX_URL, rel_url)
         return await loop.run_in_executor(
-            None, lambda: self.session.get(url, params=params))
+            None, lambda: self.session.get(url, params))
 
     async def _post(self, rel_url, data=None, params=None):
         loop = asyncio.get_event_loop()
         url = urllib.parse.urljoin(self.PREFIX_URL, rel_url)
         return await loop.run_in_executor(
-            None, lambda: self.session.post(url, data=data, params=params))
+            None, lambda: self.session.post(url, data, params))
 
     async def get_nonce(self):
         response = await self._get("account/nonce/%s/" % self.user_id)
@@ -103,7 +104,7 @@ class Exchanger(object):
 
     async def get_transfers_external(self, stock_id):
         response = await self._get(
-            'account/transfers/internal/%s/%s/' % (self.user_id, stock_id))
+            'account/transfers/external/%s/%s/' % (self.user_id, stock_id))
         return response.json()
 
     async def put_ask(self, stock_id, unit_id, quantity, price):
@@ -130,8 +131,8 @@ class Exchanger(object):
         response = await self._post("trader/bid/cancel/", request_data)
         return response.json()
 
-    async def get_stocks(self):
-        response = await self._get("market/stocks/")
+    async def get_stocks(self, limit=100):
+        response = await self._get("market/stocks/", params={'limit': limit})
         return response.json()
 
 

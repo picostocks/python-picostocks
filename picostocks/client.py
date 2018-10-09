@@ -76,15 +76,15 @@ class Exchanger(object):
         response = await self._get("account/balance/%s/" % user_id)
         return response.json()
 
-    async def get_open_orders(self, stock_id, unit_id, user_id=None, limit=100):
+    async def get_open_orders(self, stock_id=None, unit_id=None, user_id=None, limit=100):
         if user_id is None:
             user_id = self.user_id
 
-        params = {
-            'stock_id': stock_id,
-            'unit_id': unit_id,
-            'user_id': user_id
-        }
+        params = dict(user_id = user_id)
+        if stock_id is not None:
+            params['stock_id'] = stock_id
+        if unit_id is not None:
+            params['unit_id'] = unit_id
 
         response = await self._get("market/orderbook/", params=params)
         return response.json()

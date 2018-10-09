@@ -53,13 +53,13 @@ class Exchanger(object):
         loop = asyncio.get_event_loop()
         url = urllib.parse.urljoin(self.PREFIX_URL, rel_url)
         return await loop.run_in_executor(
-            None, lambda: self.session.get(url, params))
+            None, lambda: self.session.get(url, params=params))
 
     async def _post(self, rel_url, data=None, params=None):
         loop = asyncio.get_event_loop()
         url = urllib.parse.urljoin(self.PREFIX_URL, rel_url)
         return await loop.run_in_executor(
-            None, lambda: self.session.post(url, data, params))
+            None, lambda: self.session.post(url, data=data, params=params))
 
     async def get_nonce(self):
         response = await self._get("account/nonce/%s/" % self.user_id)

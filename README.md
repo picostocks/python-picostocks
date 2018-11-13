@@ -181,6 +181,16 @@ stock_id | INT | NO | if no stock_id is specified, response will return tickers 
     }
 ]
 ```
+Attribute | Type | Description
+----------|------|------
+stock_id | INT
+unit_id | INT
+stock_code | STRING
+unit_code | STRING
+price | STRING | Latest price.
+quantity | STRING | Volume of traded assets within last 24 hours period.
+count | INT | Number of trades made within last 24 hours period.
+sync | TIMESTAMP
 
 ### Order book
 ```

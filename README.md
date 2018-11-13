@@ -3,7 +3,7 @@
 This is an official Python wrapper for the Picostocks exchange REST API.
 
 # General API information
-* The base endpoint is: **https://picostocks.com**
+* The base endpoint is: **https://api.picostocks.com/v1/**
 * All endpoints return either a JSON object or array.
 * HTTP `4XX` return codes are used for for malformed requests;
   the issue is on the sender's side.
@@ -106,7 +106,7 @@ free | STRING
 ## Market data endpoints
 ### Stocks info
 ```
-GET /v1/market/stocks/
+GET /market/stocks/
 ```
 Get detailed information about all available stocks on picostocks exchange.
 
@@ -151,9 +151,40 @@ limit | INT | NO
     }
 ]
 ```
+
+
+###  Tickers 24h
+```
+GET /tickers/24h/
+```
+Get tickers for all stocks on pico exchange.
+
+**Parameters:**
+
+Name | Type | Mandatory | Descruption
+---- | ---- | --------- | -----------
+unit_id | INT | NO | if no unit_id is specified, response will return tickers for BTC `quote assets`
+stock_id | INT | NO | if no stock_id is specified, response will return tickers for all `base assets`
+
+**Response:**
+```JSON
+[
+    {
+        "stock_id": 514,
+        "unit_id": 2,
+        "stock_code": "AE",
+        "unit_code": "BTC",
+        "price": "0.000177700000000000",
+        "quantity": "13207.667851220000000000",
+        "count": 547,
+        "sync": "2018-11-13T15:29:30"
+    }
+]
+```
+
 ### Order book
 ```
-GET /v1/market/orderbook/
+GET /market/orderbook/
 ```
 Get information about all recorded orders.
 
@@ -206,7 +237,7 @@ sync | TIMESTAMP
 
 ### Internal transactions
 ```
-POST /v1/account/transfers/internal/<user_id>/<stock_id>/
+POST /account/transfers/internal/<user_id>/<stock_id>/
 ```
 Get information about internal transfers (executed entirely inside picostocks exchange).
 
@@ -237,7 +268,7 @@ sync | TIMESTAMP
 
 ### External transactions
 ```
-POST /v1/account/transfers/external/<user_id>/<stock_id>/
+POST /account/transfers/external/<user_id>/<stock_id>/
 ```
 Get information about external transfers (involving 3rd party users in the process).
 
@@ -280,7 +311,7 @@ fee | STRING | fee associated with specific order. For deposits it is always "0"
 
 ### Recent trades list
 ```
-GET /v1/account/order/history/<user_id>/<stock_id>/
+GET /account/order/history/<user_id>/<stock_id>/
 ```
 Get asks & bids history for specific `user_id` and `stock_id`
 
@@ -330,7 +361,7 @@ sync | TIMESTAMP
 ## Trading endpoints
 ### New ask order
 ```
-POST /v1/trader/ask/put/
+POST /trader/ask/put/
 ```
 Create a new ask order.
 
@@ -360,7 +391,7 @@ signature | STRING | YES | signature of `"ASK:<user_id>:<stock_id>:<quantity>:<u
 
 ### New bid order
 ```
-POST /v1/trader/bid/put/
+POST /trader/bid/put/
 ```
 Create a new bid order.
 
@@ -390,7 +421,7 @@ signature | STRING | YES | signature of `"BID:<user_id>:<stock_id>:<quantity>:<u
 
 ### Cancel ask order
 ```
-POST /v1/trader/ask/cancel/
+POST /trader/ask/cancel/
 ```
 Cancel ask order.
 
@@ -420,7 +451,7 @@ signature | STRING | YES | signature of `"CANCELASK:<user_id>:<stock_id>:<quanti
 
 ### Cancel bid order
 ```
-POST /v1/trader/bid/cancel/
+POST /trader/bid/cancel/
 ```
 Cancel bid order.
 

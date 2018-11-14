@@ -152,7 +152,6 @@ limit | INT | NO
 ]
 ```
 
-
 ###  Tickers 24h
 ```
 GET /tickers/24h/
@@ -161,9 +160,9 @@ Get tickers for all stocks on pico exchange.
 
 **Parameters:**
 
-Name | Type | Mandatory | Descruption
+Name | Type | Mandatory | Description
 ---- | ---- | --------- | -----------
-unit_id | INT | NO | if no unit_id is specified, response will return tickers for BTC `quote assets`
+unit_id | INT | NO | if no unit_id is specified, response will return tickers for all `quote assets`
 stock_id | INT | NO | if no stock_id is specified, response will return tickers for all `base assets`
 
 **Response:**
@@ -319,16 +318,16 @@ txid | STRING | transaction ID
 memo | STRING | message associated with specific order
 fee | STRING | fee associated with specific order. For deposits it is always "0"
 
-### Recent trades list
+### Recent trades list for trading pair
 ```
-GET /account/order/history/<user_id>/<stock_id>/
+GET /account/order/history/stocks/<stock_id>/<unit_id>/
 ```
-Get asks & bids history for specific `user_id` and `stock_id`
+Get asks & bids history for specific `stock_id` and `unit_id`
 
 **Parameters:**
 
-Name | Type | Mandatory
----- | ---- | ---------
+Name | Type | Mandatory | Descruption
+---- | ---- | --------- | -----------
 limit | INT | NO
 
 **Response:**
@@ -336,9 +335,9 @@ limit | INT | NO
 {
     "bids": [
         {
-            "stock_id": 2,
+            "stock_id": 15,
             "quantity": "1.000000000000000000",
-            "unit_id": 3,
+            "unit_id": 2,
             "price": "0.100000000000000000",
             "bid_user": 1384975617398,
             "ask_user": 8504937597712,
@@ -347,9 +346,59 @@ limit | INT | NO
     ],
     "asks": [
         {
-            "stock_id": 2,
+            "stock_id": 15,
             "quantity": "1.000000000000000000",
-            "unit_id": 3,
+            "unit_id": 2,
+            "price": "0.100000000000000000",
+            "bid_user": 8504937597712,
+            "ask_user": 1384975617398,
+            "sync": "2018-04-23T12:50:45.666215Z"
+        }
+    ]
+}
+```
+Attribute | Type
+----------|------
+stock_id | INT
+quantity | STRING
+unit_id | INT
+price | STRING
+bid_user | INT
+ask_user | INT
+sync | TIMESTAMP
+
+### User's recent trades list
+```
+GET /account/order/history/<user_id>/<stock_id>/
+```
+Get asks & bids history for specific `user_id` and `stock_id`
+
+**Parameters:**
+
+Name | Type | Mandatory | Descruption
+---- | ---- | --------- | -----------
+limit | INT | NO
+unit_id | INT | NO |  if no `unit_id` is specified, response will return trades list for all `quote assets`
+
+**Response:**
+```JSON
+{
+    "bids": [
+        {
+            "stock_id": 15,
+            "quantity": "1.000000000000000000",
+            "unit_id": 2,
+            "price": "0.100000000000000000",
+            "bid_user": 1384975617398,
+            "ask_user": 8504937597712,
+            "sync": "2018-04-23T12:50:28.623358Z"
+        }
+    ],
+    "asks": [
+        {
+            "stock_id": 15,
+            "quantity": "1.000000000000000000",
+            "unit_id": 2,
             "price": "0.100000000000000000",
             "bid_user": 8504937597712,
             "ask_user": 1384975617398,

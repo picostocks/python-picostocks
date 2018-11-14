@@ -105,7 +105,7 @@ class Exchanger(object):
 
     async def get_trades_history(self, stock_id, unit_id):
         response = await self._get(
-            'account/trades/history/%s/%s/' % (stock_id, unit_id))
+            'trader/history/%s/%s/' % (stock_id, unit_id))
         return response.json()
 
     async def get_transfers_internal(self, stock_id):

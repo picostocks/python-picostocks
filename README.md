@@ -3,7 +3,7 @@
 This is an official Python wrapper for the Picostocks exchange REST API.
 
 # General API information
-* The base endpoint is: **https://picostocks.com**
+* The base endpoint is: **https://api.picostocks.com/v1/**
 * All endpoints return either a JSON object or array.
 * HTTP `4XX` return codes are used for for malformed requests;
   the issue is on the sender's side.
@@ -106,7 +106,7 @@ free | STRING
 ## Market data endpoints
 ### Stocks info
 ```
-GET /v1/market/stocks/
+GET /market/stocks/
 ```
 Get detailed information about all available stocks on picostocks exchange.
 
@@ -151,9 +151,49 @@ limit | INT | NO
     }
 ]
 ```
+
+###  Tickers 24h
+```
+GET /tickers/24h/
+```
+Get tickers for all stocks on pico exchange.
+
+**Parameters:**
+
+Name | Type | Mandatory | Description
+---- | ---- | --------- | -----------
+unit_id | INT | NO | if no unit_id is specified, response will return tickers for all `quote assets`
+stock_id | INT | NO | if no stock_id is specified, response will return tickers for all `base assets`
+
+**Response:**
+```JSON
+[
+    {
+        "stock_id": 514,
+        "unit_id": 2,
+        "stock_code": "AE",
+        "unit_code": "BTC",
+        "price": "0.000177700000000000",
+        "quantity": "13207.667851220000000000",
+        "count": 547,
+        "sync": "2018-11-13T15:29:30"
+    }
+]
+```
+Attribute | Type | Description
+----------|------|------
+stock_id | INT
+unit_id | INT
+stock_code | STRING
+unit_code | STRING
+price | STRING | Latest price.
+quantity | STRING | Volume of traded assets within last 24 hours period.
+count | INT | Number of trades made within last 24 hours period.
+sync | TIMESTAMP
+
 ### Order book
 ```
-GET /v1/market/orderbook/
+GET /market/orderbook/
 ```
 Get information about all recorded orders.
 
@@ -206,7 +246,7 @@ sync | TIMESTAMP
 
 ### Internal transactions
 ```
-POST /v1/account/transfers/internal/<user_id>/<stock_id>/
+POST /account/transfers/internal/<user_id>/<stock_id>/
 ```
 Get information about internal transfers (executed entirely inside picostocks exchange).
 
@@ -237,7 +277,7 @@ sync | TIMESTAMP
 
 ### External transactions
 ```
-POST /v1/account/transfers/external/<user_id>/<stock_id>/
+POST /account/transfers/external/<user_id>/<stock_id>/
 ```
 Get information about external transfers (involving 3rd party users in the process).
 
@@ -278,16 +318,16 @@ txid | STRING | transaction ID
 memo | STRING | message associated with specific order
 fee | STRING | fee associated with specific order. For deposits it is always "0"
 
-### Recent trades list
+### Recent trades list for trading pair
 ```
-GET /v1/account/order/history/<user_id>/<stock_id>/
+GET /trader/history/<stock_id>/<unit_id>/
 ```
-Get asks & bids history for specific `user_id` and `stock_id`
+Get asks & bids history for specific `stock_id` and `unit_id`
 
 **Parameters:**
 
-Name | Type | Mandatory
----- | ---- | ---------
+Name | Type | Mandatory | Descruption
+---- | ---- | --------- | -----------
 limit | INT | NO
 
 **Response:**
@@ -295,9 +335,9 @@ limit | INT | NO
 {
     "bids": [
         {
-            "stock_id": 2,
+            "stock_id": 15,
             "quantity": "1.000000000000000000",
-            "unit_id": 3,
+            "unit_id": 2,
             "price": "0.100000000000000000",
             "bid_user": 1384975617398,
             "ask_user": 8504937597712,
@@ -306,9 +346,59 @@ limit | INT | NO
     ],
     "asks": [
         {
-            "stock_id": 2,
+            "stock_id": 15,
             "quantity": "1.000000000000000000",
-            "unit_id": 3,
+            "unit_id": 2,
+            "price": "0.100000000000000000",
+            "bid_user": 8504937597712,
+            "ask_user": 1384975617398,
+            "sync": "2018-04-23T12:50:45.666215Z"
+        }
+    ]
+}
+```
+Attribute | Type
+----------|------
+stock_id | INT
+quantity | STRING
+unit_id | INT
+price | STRING
+bid_user | INT
+ask_user | INT
+sync | TIMESTAMP
+
+### User's recent trades list
+```
+GET /account/order/history/<user_id>/<stock_id>/
+```
+Get asks & bids history for specific `user_id` and `stock_id`
+
+**Parameters:**
+
+Name | Type | Mandatory | Descruption
+---- | ---- | --------- | -----------
+limit | INT | NO
+unit_id | INT | NO |  if no `unit_id` is specified, response will return trades list for all `quote assets`
+
+**Response:**
+```JSON
+{
+    "bids": [
+        {
+            "stock_id": 15,
+            "quantity": "1.000000000000000000",
+            "unit_id": 2,
+            "price": "0.100000000000000000",
+            "bid_user": 1384975617398,
+            "ask_user": 8504937597712,
+            "sync": "2018-04-23T12:50:28.623358Z"
+        }
+    ],
+    "asks": [
+        {
+            "stock_id": 15,
+            "quantity": "1.000000000000000000",
+            "unit_id": 2,
             "price": "0.100000000000000000",
             "bid_user": 8504937597712,
             "ask_user": 1384975617398,
@@ -330,7 +420,7 @@ sync | TIMESTAMP
 ## Trading endpoints
 ### New ask order
 ```
-POST /v1/trader/ask/put/
+POST /trader/ask/put/
 ```
 Create a new ask order.
 
@@ -360,7 +450,7 @@ signature | STRING | YES | signature of `"ASK:<user_id>:<stock_id>:<quantity>:<u
 
 ### New bid order
 ```
-POST /v1/trader/bid/put/
+POST /trader/bid/put/
 ```
 Create a new bid order.
 
@@ -390,7 +480,7 @@ signature | STRING | YES | signature of `"BID:<user_id>:<stock_id>:<quantity>:<u
 
 ### Cancel ask order
 ```
-POST /v1/trader/ask/cancel/
+POST /trader/ask/cancel/
 ```
 Cancel ask order.
 
@@ -420,7 +510,7 @@ signature | STRING | YES | signature of `"CANCELASK:<user_id>:<stock_id>:<quanti
 
 ### Cancel bid order
 ```
-POST /v1/trader/bid/cancel/
+POST /trader/bid/cancel/
 ```
 Cancel bid order.
 

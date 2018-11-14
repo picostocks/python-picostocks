@@ -90,11 +90,22 @@ class Exchanger(object):
         response = await self._get("market/orderbook/", params=params)
         return response.json()
 
-    async def get_historical_orders(self, stock_id, user_id=None):
+    async def get_historical_orders(self, stock_id, user_id=None, unit_id=None):
+        params = None
         if user_id is None:
             user_id = self.user_id
+            
+        if unit_id is not None:
+            params = {'unit_id': unit_id}
+            
         response = await self._get(
-            'account/order/history/%s/%s/' % (user_id, stock_id))
+            'account/order/history/%s/%s/' % (user_id, stock_id),
+            params=params)
+        return response.json()
+
+    async def get_trades_history(self, stock_id, unit_id):
+        response = await self._get(
+            'trader/history/%s/%s/' % (stock_id, unit_id))
         return response.json()
 
     async def get_transfers_internal(self, stock_id):

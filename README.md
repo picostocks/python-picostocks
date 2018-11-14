@@ -320,7 +320,7 @@ fee | STRING | fee associated with specific order. For deposits it is always "0"
 
 ### Recent trades list for trading pair
 ```
-GET /account/trades/history/<stock_id>/<unit_id>/
+GET /trader/history/<stock_id>/<unit_id>/
 ```
 Get asks & bids history for specific `stock_id` and `unit_id`
 

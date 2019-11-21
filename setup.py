@@ -8,7 +8,7 @@ from setuptools import setup
 with open('README.md') as readme_file:
     readme = readme_file.read()
 
-requirements = ["requests==2.18.4", "ed25519==1.4"]
+requirements = ["requests==2.20.0", "ed25519==1.4"]
 
 setup(
     author="picostocks",

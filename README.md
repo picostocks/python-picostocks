@@ -154,7 +154,7 @@ limit | INT | NO
 
 ###  Tickers 24h
 ```
-GET /tickers/24h/
+GET /market/tickers/24h/
 ```
 Get tickers for all stocks on pico exchange.
 
